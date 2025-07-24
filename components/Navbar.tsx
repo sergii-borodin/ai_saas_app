@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import NavItems from "./ui/NavItems";
 
 const Navbar = () => {
   return (
@@ -10,6 +11,9 @@ const Navbar = () => {
           <Image src="images/logo.svg" alt="logo" width={46} height={44} />
         </div>
       </Link>
+      <div className="flex items-center gap-8">
+        <NavItems />
+      </div>
     </nav>
   );
 };
