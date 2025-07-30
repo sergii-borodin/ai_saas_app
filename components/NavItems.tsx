@@ -2,6 +2,13 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  SignInButton,
+  SignUpButton,
+  UserButton,
+  SignedIn,
+  SignedOut,
+} from "@clerk/nextjs";
 
 const navItems = [
   { label: "Home", href: "/" },
@@ -22,6 +29,23 @@ const NavItems = () => {
           {label}
         </Link>
       ))}
+
+      {/* Clerk Authentication Components */}
+      <SignedOut>
+        <SignInButton mode="modal">
+          <button className="text-sm font-medium text-gray-700 hover:text-gray-900">
+            Sign in
+          </button>
+        </SignInButton>
+        <SignUpButton mode="modal">
+          <button className="text-sm font-medium bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90">
+            Sign up
+          </button>
+        </SignUpButton>
+      </SignedOut>
+      <SignedIn>
+        <UserButton />
+      </SignedIn>
     </div>
   );
 };
