@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -20,21 +19,22 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
+} from "@/components/ui/select";
 import { subjects } from "@/constants";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
+import { createCompanion } from "@/lib/actions/companion.actions";
+import { redirect } from "next/navigation";
 
 const formSchema = z.object({
-  name: z.string().min(2, { message: "Companion Name is required." }),
-  subject: z.string().min(2, { message: "Subject is required." }),
-  topic: z.string().min(2, { message: "Topic is required." }),
-  voice: z.string().min(2, { message: "Voice is required." }),
-  style: z.string().min(2, { message: "Style is required." }),
+  name: z.string().min(1, { message: "Companion is required." }),
+  subject: z.string().min(1, { message: "Subject is required." }),
+  topic: z.string().min(1, { message: "Topic is required." }),
+  voice: z.string().min(1, { message: "Voice is required." }),
+  style: z.string().min(1, { message: "Style is required." }),
   duration: z.number().min(1, { message: "Duration is required." }),
 });
 
 const CompanionForm = () => {
-  // Default form schema
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,10 +47,17 @@ const CompanionForm = () => {
     },
   });
 
-  // Submit handler
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const companion = await createCompanion(values);
+
+    if (companion) {
+      redirect(`/companions/${companion.id}`);
+    } else {
+      console.log("Failed to create a companion");
+      redirect("/");
+    }
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -59,10 +66,10 @@ const CompanionForm = () => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Companion Name</FormLabel>
+              <FormLabel>Companion name</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter a companion name"
+                  placeholder="Enter the companion name"
                   {...field}
                   className="input"
                 />
@@ -103,7 +110,7 @@ const CompanionForm = () => {
         />
         <FormField
           control={form.control}
-          name="name"
+          name="topic"
           render={({ field }) => (
             <FormItem>
               <FormLabel>What should the companion help with?</FormLabel>
@@ -118,6 +125,7 @@ const CompanionForm = () => {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="voice"
@@ -130,7 +138,7 @@ const CompanionForm = () => {
                   value={field.value}
                   defaultValue={field.value}>
                   <SelectTrigger className="input">
-                    <SelectValue placeholder="Select the voice " />
+                    <SelectValue placeholder="Select the voice" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="male">Male</SelectItem>
@@ -166,21 +174,27 @@ const CompanionForm = () => {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="duration"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Estimated duration in minutes</FormLabel>
+              <FormLabel>Estimated session duration in minutes</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="15" {...field} />
+                <Input
+                  type="number"
+                  placeholder="15"
+                  {...field}
+                  className="input"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full" cursor-pointer>
-          Build your companion
+        <Button type="submit" className="w-full cursor-pointer">
+          Build Your Companion
         </Button>
       </form>
     </Form>
