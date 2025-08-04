@@ -1,4 +1,4 @@
-import CompanionCard from "@/components/CompanionsCards";
+import CompanionCard from "@/components/CompanionCard";
 import CompanionsList from "@/components/CompanionsList";
 import Cta from "@/components/Cta";
 import { recentSessions } from "@/constants";
