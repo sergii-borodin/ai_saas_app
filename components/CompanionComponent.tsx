@@ -94,6 +94,7 @@ const CompanionComponent = ({
   };
   const handleDisconnect = async () => {
     setCallStatus(CallStatus.FINISHED);
+    vapi.stop();
   };
 
   return (
@@ -186,20 +187,19 @@ const CompanionComponent = ({
             if (message.role === "assistant") {
               return (
                 <p key={index} className="max-sm:text-sm">
-                  {name.split(" ")[0].replace("/[.,]/g,", "")} :
-                  {message.content}
+                  {name.split(" ")[0].replace("/[.,]/g,", "")}:{message.content}
                 </p>
               );
             } else {
               return (
                 <p key={index} className="text-primary max-sm:text-sm">
-                  {userName}:{message.content}
+                  {userName}: {message.content}
                 </p>
               );
             }
           })}
         </div>
-        <div className="transcript-fade"></div>
+        <div className="transcript-fade" />
       </section>
     </section>
   );
