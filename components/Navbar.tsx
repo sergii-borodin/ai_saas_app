@@ -7,8 +7,14 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <Link href="/">
-        <div className="">
-          <Image src="/images/logo.svg" alt="logo" width={46} height={44} />
+        <div>
+          <Image
+            src="/images/chatBot.jpeg"
+            alt="logo"
+            width={46}
+            height={44}
+            className="rounded-lg"
+          />
         </div>
       </Link>
       <div className="flex items-center gap-8">
