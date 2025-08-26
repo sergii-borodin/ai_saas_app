@@ -1,4 +1,4 @@
-import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignIn } from "@clerk/nextjs";
 import { getAllCompanions } from "@/lib/actions/companion.actions";
 import CompanionCard from "@/components/CompanionCard";
 import { getSubjectColor } from "@/lib/utils";
@@ -39,13 +39,14 @@ const CompanionsLibrary = async ({ searchParams }: SearchParams) => {
         </main>
       </SignedIn>
       <SignedOut>
-        <div className="text-center py-12">
+        <div className="flex flex-col items-center py-12">
           <h2 className="text-2xl font-semibold mb-4">
             Sign in to access your companions
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 mb-12">
             Create and manage your AI teaching companions
           </p>
+          <SignIn />
         </div>
       </SignedOut>
     </div>

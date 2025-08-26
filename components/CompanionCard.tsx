@@ -22,14 +22,14 @@ const CompanionCard = ({
     <article className="companion-card" style={{ backgroundColor: color }}>
       <div className="flex justify-between items-center">
         <div className="subject-badge">{subject}</div>
-        <button className="companion-bookmark">
+        {/* <button className="companion-bookmark">
           <Image
             src="/icons/bookmark.svg"
             alt="bookmark"
             width={12.5}
             height={15}
           />
-        </button>
+        </button> */}
       </div>
       <h2 className="text-2xl font-bold">{name}</h2>
       <p className="text-sm">{topic}</p>
@@ -48,6 +48,13 @@ const CompanionCard = ({
         </button>
       </Link>
     </article>
+    // <div className="relative max-w-xs p-3 bg-cyan-100 text-gray-800 rounded-2xl rounded-br-none">
+    //   Hello! This is a chat message.
+    //   <div
+    //     className="absolute right-0 bottom-0 w-0 h-0
+    //           border-t-[12px] border-t-cyan-100
+    //           border-r-[12px] border-r-transparent"></div>
+    // </div>
   );
 };
 
