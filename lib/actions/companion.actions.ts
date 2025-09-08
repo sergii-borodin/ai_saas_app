@@ -2,6 +2,7 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { createSupabaseClient } from "@/lib/supabase";
+import { revalidatePath } from "next/cache";
 
 export const createCompanion = async (formData: CreateCompanion) => {
   const { userId: author } = await auth();
@@ -24,6 +25,8 @@ export const getAllCompanions = async ({
   topic,
   subject,
 }: GetAllCompanions) => {
+  const { userId: author } = await auth();
+  if (!author) throw new Error("User not found");
   const supabase = createSupabaseClient();
 
   let query = supabase.from("companions").select();
@@ -44,7 +47,23 @@ export const getAllCompanions = async ({
 
   if (error) throw new Error(error.message);
 
-  return companions;
+  const companionIds = companions.map((companion) => companion.id);
+
+  const { data: bookmarkedCompanions, error: bookmarkedCompanionsError } =
+    await supabase
+      .from("bookmarked_companions")
+      .select()
+      .eq("user_id", author)
+      .in("companion_id", companionIds);
+  if (bookmarkedCompanionsError)
+    throw new Error(bookmarkedCompanionsError.message);
+
+  return companions.map((companion) => ({
+    ...companion,
+    isBookmarked: bookmarkedCompanions.some(
+      (bookmarkedCompanion) => bookmarkedCompanion.companion_id === companion.id
+    ),
+  }));
 };
 
 export const getCompanion = async (id: string) => {
@@ -62,6 +81,7 @@ export const getCompanion = async (id: string) => {
 
 export const addSessionToHistory = async (companionId: string) => {
   const { userId } = await auth();
+  if (!userId) throw new Error("User not found");
   const supabase = createSupabaseClient();
 
   const { data, error } = await supabase
@@ -122,16 +142,37 @@ export const getUserCompanions = async (userId: string) => {
   return data;
 };
 
-export const bookmarkCompanion = async (companionId: string) => {
+export const bookmarkCompanion = async (companionId: string, path: string) => {
   const { userId: author } = await auth();
+  if (!author) throw new Error("User not found");
   const supabase = createSupabaseClient();
 
   const { data, error } = await supabase
-    .from("companions")
-    .update({ bookmarked: true, author })
-    .eq("id", companionId);
+    .from("bookmarked_companions")
+    .insert({ companion_id: companionId, user_id: author });
 
   if (error) throw new Error(error.message);
+  revalidatePath(path);
+
+  return data;
+};
+
+export const unBookmarkCompanion = async (
+  companionId: string,
+  path: string
+) => {
+  const { userId: author } = await auth();
+  if (!author) throw new Error("User not found");
+  const supabase = createSupabaseClient();
+
+  const { data, error } = await supabase
+    .from("bookmarked_companions")
+    .delete()
+    .eq("companion_id", companionId)
+    .eq("user_id", author);
+
+  if (error) throw new Error(error.message);
+  revalidatePath(path);
 
   return data;
 };
