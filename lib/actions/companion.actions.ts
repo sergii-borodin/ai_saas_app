@@ -66,11 +66,21 @@ export const addSessionToHistory = async (companionId: string) => {
 
   const { data, error } = await supabase
     .from("session_history")
-    .insert({ companion_id: companionId, user_id: userId });
+    .select()
+    .eq("companion_id", companionId)
+    .eq("user_id", userId);
 
   if (error) throw new Error(error.message);
 
-  return data;
+  if (data.length === 0) {
+    const { data, error } = await supabase
+      .from("session_history")
+      .insert({ companion_id: companionId, user_id: userId });
+
+    if (error) throw new Error(error.message);
+
+    return data;
+  }
 };
 
 export const getRecentSessions = async (limit = 10) => {
@@ -106,6 +116,20 @@ export const getUserCompanions = async (userId: string) => {
     .from("companions")
     .select()
     .eq("author", userId);
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
+export const bookmarkCompanion = async (companionId: string) => {
+  const { userId: author } = await auth();
+  const supabase = createSupabaseClient();
+
+  const { data, error } = await supabase
+    .from("companions")
+    .update({ bookmarked: true, author })
+    .eq("id", companionId);
 
   if (error) throw new Error(error.message);
 
