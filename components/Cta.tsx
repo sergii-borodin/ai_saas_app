@@ -2,9 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const Cta = () => {
+const Cta = ({ ctaClass }: { ctaClass: string }) => {
   return (
-    <section className="cta-section">
+    <section className={ctaClass}>
       <div className="cta-badge">Start learning your way</div>
       <h2 className="text-3xl font-bold">
         Build and Personalize Learning Companion
