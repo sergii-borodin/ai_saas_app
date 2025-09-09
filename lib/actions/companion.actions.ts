@@ -26,7 +26,7 @@ export const getAllCompanions = async ({
   subject,
 }: GetAllCompanions) => {
   const { userId: author } = await auth();
-  if (!author) throw new Error("User not found");
+
   const supabase = createSupabaseClient();
 
   let query = supabase.from("companions").select();
